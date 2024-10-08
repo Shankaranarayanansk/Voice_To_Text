@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice-to-Text App</title>
+    <title>Extended Speech-to-Text App</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
     <style>
         body {
@@ -22,13 +22,16 @@
             border: 1px solid #ccc;
             padding: 10px;
             min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
-    <h1>Speech-to-Text App</h1>
-    <button id="startBtn">Start</button>
-    <button id="stopBtn" disabled>Stop</button>
+    <h1>Extended Speech-to-Text App</h1>
+    <button id="startBtn">Start Listening</button>
+    <button id="stopBtn" disabled>Stop Listening</button>
+    <button id="saveBtn" disabled>Save Transcript</button>
     <div id="output"></div>
 
     <script src="app.js"></script>
