@@ -1,33 +1,32 @@
-// Check if the browser supports Speech Recognition
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 if (!SpeechRecognition) {
     alert("Your browser does not support Speech Recognition.");
 } else {
     const recognition = new SpeechRecognition();
-    recognition.interimResults = true; // Get interim results
-    recognition.lang = 'en-US'; // Set the language
-    recognition.continuous = true; // Continue listening even after capturing speech
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+    recognition.continuous = true;
 
     const startButton = document.getElementById('start');
     const stopButton = document.getElementById('stop');
     const resultDiv = document.getElementById('result');
     let isListening = false;
-    let finalTranscript = ''; // Store the finalized transcript
-    let previousFinalTranscript = ''; // To prevent repeating the same words
+    let finalTranscript = '';
+    let lastTranscript = ''; // Store last final transcript to prevent repetition
 
-    // Start listening when the "Start" button is clicked
+    // Start button click event
     startButton.addEventListener('click', () => {
         if (!isListening) {
             recognition.start();
             isListening = true;
             resultDiv.textContent = 'Listening...';
-            startButton.disabled = true; // Disable the start button while listening
-            stopButton.disabled = false; // Enable the stop button
+            startButton.disabled = true;
+            stopButton.disabled = false;
         }
     });
 
-    // Stop listening when the "Stop" button is clicked
+    // Stop button click event
     stopButton.addEventListener('click', () => {
         if (isListening) {
             recognition.stop();
@@ -37,35 +36,34 @@ if (!SpeechRecognition) {
         }
     });
 
-    // Process speech recognition results
+    // Process the speech recognition result
     recognition.addEventListener('result', (event) => {
         let interimTranscript = '';
 
-        // Loop through all the results (can contain interim results)
         for (let i = event.resultIndex; i < event.results.length; i++) {
             if (event.results[i].isFinal) {
                 let currentFinal = event.results[i][0].transcript.trim();
-                
-                // Prevent repeated appending of same results
-                if (currentFinal !== previousFinalTranscript) {
+
+                // Append final result only if it's not the same as the last final result
+                if (currentFinal !== lastTranscript) {
                     finalTranscript += currentFinal + ' ';
-                    previousFinalTranscript = currentFinal; // Update with the new final transcript
+                    lastTranscript = currentFinal; // Update last transcript with current one
                 }
             } else {
-                interimTranscript += event.results[i][0].transcript; // Capture interim results (temporary)
+                interimTranscript += event.results[i][0].transcript;
             }
         }
 
-        // Update the result div with the final and interim transcript
+        // Display the final transcript combined with the interim transcript
         resultDiv.textContent = finalTranscript + interimTranscript;
     });
 
-    // When speech recognition ends, if still listening, restart it
+    // Restart speech recognition when it ends, if still listening
     recognition.addEventListener('end', () => {
         if (isListening) {
-            recognition.start(); // Restart recognition automatically
+            recognition.start();
         } else {
-            resultDiv.textContent += ' (Stopped listening.)'; // Indicate that listening has stopped
+            resultDiv.textContent += ' (Stopped listening.)';
         }
     });
 }
