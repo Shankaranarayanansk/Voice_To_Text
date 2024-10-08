@@ -7,58 +7,32 @@ if (!SpeechRecognition) {
     const recognition = new SpeechRecognition();
     recognition.interimResults = true; // Get interim results
     recognition.lang = 'en-US'; // Set the language
-    recognition.continuous = true; // Continue listening even after capturing speech
 
     const startButton = document.getElementById('start');
-    const stopButton = document.getElementById('stop');
     const resultDiv = document.getElementById('result');
-    let isListening = false;
-    let finalTranscript = ''; // Store the finalized transcript
 
-    // Start listening when the "Start" button is clicked
+    // Start listening
     startButton.addEventListener('click', () => {
-        if (!isListening) {
-            recognition.start();
-            isListening = true;
-            resultDiv.textContent = 'Listening...';
-            startButton.disabled = true; // Disable the start button while listening
-            stopButton.disabled = false; // Enable the stop button
-        }
+        recognition.start();
+        resultDiv.textContent = 'Listening...'; // Show that we are listening
     });
 
-    // Stop listening when the "Stop" button is clicked
-    stopButton.addEventListener('click', () => {
-        if (isListening) {
-            recognition.stop();
-            isListening = false;
-            startButton.disabled = false;
-            stopButton.disabled = true;
-        }
-    });
-
-    // Process speech recognition results
+    // Process results
     recognition.addEventListener('result', (event) => {
-        let interimTranscript = '';
-
-        // Loop through all the results (can contain interim results)
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-            if (event.results[i].isFinal) {
-                finalTranscript += event.results[i][0].transcript + ' '; // Append only final results
-            } else {
-                interimTranscript += event.results[i][0].transcript; // Capture interim results (temporary)
-            }
+        const transcript = Array.from(event.results)
+            .map(result => result[0].transcript)
+            .join('');
+        
+        resultDiv.textContent = transcript; // Update the result div with the transcript
+        
+        if (event.results[0].isFinal) {
+            // If the speech recognition result is final
+            console.log(`Final Transcript: ${transcript}`);
         }
-
-        // Update the result div with the final and interim transcript
-        resultDiv.textContent = finalTranscript + ' ' + interimTranscript;
     });
 
-    // When speech recognition ends, if still listening, restart it
+    // Handle end of recognition
     recognition.addEventListener('end', () => {
-        if (isListening) {
-            recognition.start(); // Restart recognition automatically
-        } else {
-            resultDiv.textContent += ' (Stopped listening.)'; // Indicate that listening has stopped
-        }
+        resultDiv.textContent += ' (Stopped listening.)'; // Indicate that listening has stopped
     });
 }
