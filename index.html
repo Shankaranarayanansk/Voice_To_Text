@@ -3,33 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Continuous Voice to Text Converter</title>
+    <title>Voice-to-Text App</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 20px;
         }
-        #result {
+        button {
+            font-size: 18px;
+            padding: 10px 20px;
+            margin: 10px;
+        }
+        #output {
             margin-top: 20px;
             border: 1px solid #ccc;
             padding: 10px;
-            min-height: 150px;
-            max-width: 100%;
-            white-space: pre-wrap;
-        }
-        button {
-            padding: 10px 15px;
-            font-size: 16px;
-            margin-right: 10px;
+            min-height: 200px;
         }
     </style>
 </head>
 <body>
-    <h1>Continuous Voice to Text Converter</h1>
-    <button id="start">Start Listening</button>
-    <button id="stop" disabled>Stop Listening</button>
-    <div id="result">Result will be displayed here...</div>
+    <h1>Speech-to-Text App</h1>
+    <button id="startBtn">Start</button>
+    <button id="stopBtn" disabled>Stop</button>
+    <div id="output"></div>
 
     <script src="app.js"></script>
+
 </body>
 </html>

@@ -1,69 +1,45 @@
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition;
+const startBtn = document.getElementById('startBtn');
+const stopBtn = document.getElementById('stopBtn');
+const output = document.getElementById('output');
 
-if (!SpeechRecognition) {
-    alert("Your browser does not support Speech Recognition.");
-} else {
-    const recognition = new SpeechRecognition();
-    recognition.interimResults = true;
-    recognition.lang = 'en-US';
+if ('webkitSpeechRecognition' in window) {
+    recognition = new webkitSpeechRecognition();
     recognition.continuous = true;
+    recognition.interimResults = true;
 
-    const startButton = document.getElementById('start');
-    const stopButton = document.getElementById('stop');
-    const resultDiv = document.getElementById('result');
-    let isListening = false;
-    let finalTranscript = '';
-    let lastTranscript = ''; // Store last final transcript to prevent repetition
-
-    // Start button click event
-    startButton.addEventListener('click', () => {
-        if (!isListening) {
-            recognition.start();
-            isListening = true;
-            resultDiv.textContent = 'Listening...';
-            startButton.disabled = true;
-            stopButton.disabled = false;
-        }
-    });
-
-    // Stop button click event
-    stopButton.addEventListener('click', () => {
-        if (isListening) {
-            recognition.stop();
-            isListening = false;
-            startButton.disabled = false;
-            stopButton.disabled = true;
-        }
-    });
-
-    // Process the speech recognition result
-    recognition.addEventListener('result', (event) => {
+    recognition.onresult = (event) => {
         let interimTranscript = '';
+        let finalTranscript = '';
 
-        for (let i = event.resultIndex; i < event.results.length; i++) {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
             if (event.results[i].isFinal) {
-                let currentFinal = event.results[i][0].transcript.trim();
-
-                // Append final result only if it's not the same as the last final result
-                if (currentFinal !== lastTranscript) {
-                    finalTranscript += currentFinal + ' ';
-                    lastTranscript = currentFinal; // Update last transcript with current one
-                }
+                finalTranscript += event.results[i][0].transcript;
             } else {
                 interimTranscript += event.results[i][0].transcript;
             }
         }
 
-        // Display the final transcript combined with the interim transcript
-        resultDiv.textContent = finalTranscript + interimTranscript;
-    });
+        output.innerHTML = finalTranscript + '<i style="color:#999">' + interimTranscript + '</i>';
+    };
 
-    // Restart speech recognition when it ends, if still listening
-    recognition.addEventListener('end', () => {
-        if (isListening) {
-            recognition.start();
-        } else {
-            resultDiv.textContent += ' (Stopped listening.)';
-        }
-    });
+    recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+    };
+
+    startBtn.onclick = () => {
+        recognition.start();
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+    };
+
+    stopBtn.onclick = () => {
+        recognition.stop();
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+    };
+} else {
+    startBtn.style.display = 'none';
+    stopBtn.style.display = 'none';
+    output.innerHTML = 'Web Speech API is not supported in this browser.';
 }
