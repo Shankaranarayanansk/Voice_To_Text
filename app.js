@@ -13,6 +13,7 @@ if (!SpeechRecognition) {
     const stopButton = document.getElementById('stop');
     const resultDiv = document.getElementById('result');
     let isListening = false;
+    let finalTranscript = ''; // Store the finalized transcript
 
     // Start listening when the "Start" button is clicked
     startButton.addEventListener('click', () => {
@@ -37,14 +38,19 @@ if (!SpeechRecognition) {
 
     // Process speech recognition results
     recognition.addEventListener('result', (event) => {
-        let transcript = '';
-        // Loop through all results (can contain interim results)
+        let interimTranscript = '';
+
+        // Loop through all the results (can contain interim results)
         for (let i = event.resultIndex; i < event.results.length; i++) {
-            transcript += event.results[i][0].transcript;
+            if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript + ' '; // Append only final results
+            } else {
+                interimTranscript += event.results[i][0].transcript; // Capture interim results (temporary)
+            }
         }
 
-        // Append to the result div
-        resultDiv.textContent += transcript + ' ';
+        // Update the result div with the final and interim transcript
+        resultDiv.textContent = finalTranscript + ' ' + interimTranscript;
     });
 
     // When speech recognition ends, if still listening, restart it
