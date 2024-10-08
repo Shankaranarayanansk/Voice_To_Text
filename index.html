@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voice to Text Converter</title>
+    <title>Continuous Voice to Text Converter</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -13,17 +13,21 @@
             margin-top: 20px;
             border: 1px solid #ccc;
             padding: 10px;
-            min-height: 100px;
+            min-height: 150px;
+            max-width: 100%;
+            white-space: pre-wrap;
         }
         button {
             padding: 10px 15px;
             font-size: 16px;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
-    <h1>Voice to Text Converter</h1>
+    <h1>Continuous Voice to Text Converter</h1>
     <button id="start">Start Listening</button>
+    <button id="stop" disabled>Stop Listening</button>
     <div id="result">Result will be displayed here...</div>
 
     <script src="app.js"></script>
